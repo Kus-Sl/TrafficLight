@@ -7,38 +7,48 @@ class ViewController: UIViewController {
 
     @IBOutlet weak var startButton: UIButton!
 
-    private var counter = 0
+    private var currentLight = CurrentLight.red
+    private let lightIsOn: CGFloat = 1
+    private let lightIsOff: CGFloat = 0.3
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        startButton.layer.cornerRadius = 10
+
+        redView.alpha = lightIsOff
+        yellowView.alpha = lightIsOff
+        greenView.alpha = lightIsOff
+    }
 
     override func viewWillLayoutSubviews() {
         redView.layer.cornerRadius = redView.frame.height / 2
         yellowView.layer.cornerRadius = yellowView.frame.height / 2
         greenView.layer.cornerRadius = greenView.frame.height / 2
-        startButton.layer.cornerRadius = 10
     }
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        redView.alpha = 0.3
-        yellowView.alpha = 0.3
-        greenView.alpha = 0.3
-    }
-
-    // Насколько логика ниже не читаема по шкале от 1 до 5?))
     @IBAction func startButtonPressed() {
-        startButton.setTitle("NEXT", for: .normal)
+        if startButton.currentTitle == "START" {
+            startButton.setTitle("NEXT", for: .normal)
+        }
 
-        let trafficLightsViews = [redView, yellowView, greenView]
-
-        counter != 0 ? (trafficLightsViews[counter - 1]?.alpha = 0.3) : nil
-
-        if counter < trafficLightsViews.endIndex {
-            trafficLightsViews[counter]?.alpha = 1
-            counter += 1
-        } else {
-            counter = 0
-            trafficLightsViews[counter]?.alpha = 1
-            counter += 1
+        switch currentLight {
+        case .red:
+            greenView.alpha = lightIsOff
+            redView.alpha = lightIsOn
+            currentLight = .yellow
+        case .yellow:
+            redView.alpha = lightIsOff
+            yellowView.alpha = lightIsOn
+            currentLight = .green
+        case .green:
+            greenView.alpha = lightIsOn
+            yellowView.alpha = lightIsOff
+            currentLight = .red
         }
     }
+}
+
+enum CurrentLight {
+    case red, yellow, green
 }
